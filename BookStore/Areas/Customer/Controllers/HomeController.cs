@@ -8,6 +8,10 @@ using Microsoft.Extensions.Logging;
 using BookStore.Models;
 using BookStore.DataAccess.IMainRepository;
 using BookStore.Models.DbModels;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Http;
+using BookStore.Utility;
 
 namespace BookStore.Areas.Customer.Controllers
 {
@@ -31,9 +35,65 @@ namespace BookStore.Areas.Customer.Controllers
             return View(productList);
         }
 
-        public IActionResult Privacy()
+        public IActionResult Details(int id)
         {
-            return View();
+            var product = _uow.Product.GetFirstOrDefault(p => p.Id == id, includeProperties: "Category,CoverType");
+
+            ShoppingCart cart = new ShoppingCart()
+            {
+                Product = product,
+                ProductId = product.Id
+            };
+            return View(cart);
+        }
+
+        [ValidateAntiForgeryToken]
+        [HttpPost]
+        [Authorize]
+        public IActionResult Details(ShoppingCart cartObj)
+        {
+            cartObj.Id = 0;
+            if (ModelState.IsValid)
+            {
+                var claimsIdentity = (ClaimsIdentity)User.Identity;
+                var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
+                cartObj.ApplicationUserId = claim.Value;
+
+                ShoppingCart fromDb = _uow.ShoppingCart.GetFirstOrDefault(
+                    s => s.ApplicationUserId == cartObj.ApplicationUserId
+                    && s.ProductId == cartObj.ProductId,
+                    includeProperties: "Product");
+
+                if (fromDb == null)
+                {
+                    //Insert
+                    _uow.ShoppingCart.Add(cartObj);
+                }
+                else
+                {
+                    //Update
+                    fromDb.Count += cartObj.Count;
+                }
+
+                _uow.Save();
+
+                var shoppingCount = _uow.ShoppingCart.GetAll(a => a.ApplicationUserId == cartObj.ApplicationUserId).ToList().Count();
+
+                HttpContext.Session.SetInt32(ProjectConstant.shoppingCart, shoppingCount);
+
+                return RedirectToAction(nameof(Index));
+            }
+            else
+            {
+                var product = _uow.Product.GetFirstOrDefault(p => p.Id == cartObj.ProductId, includeProperties: "Category,CoverType");
+
+                ShoppingCart cart = new ShoppingCart()
+                {
+                    Product = product,
+                    ProductId = product.Id
+                };
+                return View(cart);
+            }
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
