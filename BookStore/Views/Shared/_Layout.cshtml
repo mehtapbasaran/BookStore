@@ -1,4 +1,6 @@
 ﻿@using BookStore.Utility
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
 
 <!DOCTYPE html>
 <html lang="en">
@@ -47,7 +49,7 @@
                         }
 
                         @if (User.IsInRole(ProjectConstant.Role_Employee) || User.IsInRole
-                             (ProjectConstant.Role_Admin))
+                          (ProjectConstant.Role_Admin))
                         {
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
@@ -61,6 +63,28 @@
                                 </div>
                             </li>
                         }
+                        @if (HttpContextAccessor.HttpContext.Session.GetInt32(ProjectConstant.shoppingCart) != null)
+                        {
+                            <li style="color:white">
+                                <a asp-area="Customer" asp-controller="Cart" asp-action="Index" class="nav-link">
+                                    @{
+                                        var count = HttpContextAccessor.HttpContext.Session.GetInt32(ProjectConstant.shoppingCart);
+                                    }
+                                    <i class="fas fa-shopping-cart"> (@count)</i>
+                                </a>
+                            </li>
+                        }
+
+                        else
+                        {
+                            <li style="color:white">
+                                <a href="#" class="nav-link">
+
+                                    <i class="fas fa-shopping-cart"> (0)</i>
+                                </a>
+                            </li>
+                        }
+
                     </ul>
                 </div>
             </div>
