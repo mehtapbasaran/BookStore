@@ -2,6 +2,8 @@
 using BookStore.DataAccess.IMainRepository;
 using BookStore.Models.DbModels;
 using BookStore.Models.ViewModels;
+using BookStore.Utility;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -12,6 +14,8 @@ using System.Linq;
 namespace BookStore.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = ProjectConstant.Role_Admin)]
+
     public class ProductController : Controller
     {
         #region Variables

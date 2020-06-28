@@ -4,12 +4,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using BookStore.DataAccess.IMainRepository;
 using BookStore.Models.DbModels;
+using BookStore.Utility;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookStore.Areas.Admin.Controllers
 {
     [Area("Admin")]
-   // [Authorize(Roles = ProjectConstant.Role_Admin + "," + ProjectConstant.Role_Employee)]
+    [Authorize(Roles = ProjectConstant.Role_Admin + "," + ProjectConstant.Role_Employee)]
     public class CompanyController : Controller
     {
         #region Variables

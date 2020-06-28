@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace MainMusicStore.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    //[Authorize(Roles = ProjectConstant.Role_Admin)]
+    [Authorize(Roles = ProjectConstant.Role_Admin)]
     public class CoverTypeController : Controller
     {
         #region Variables
