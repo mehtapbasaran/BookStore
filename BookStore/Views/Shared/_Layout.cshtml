@@ -49,7 +49,7 @@
                         }
 
                         @if (User.IsInRole(ProjectConstant.Role_Employee) || User.IsInRole
-                          (ProjectConstant.Role_Admin))
+                         (ProjectConstant.Role_Admin))
                         {
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
@@ -63,6 +63,9 @@
                                 </div>
                             </li>
                         }
+                        <li class="nav-item">
+                            <a class="nav-link text-white" asp-area="Admin" asp-controller="Order" asp-action="Index">Orders</a>
+                        </li>
                         @if (HttpContextAccessor.HttpContext.Session.GetInt32(ProjectConstant.shoppingCart) != null)
                         {
                             <li style="color:white">
