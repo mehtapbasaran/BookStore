@@ -93,25 +93,24 @@ namespace BookStore.Areas.Customer.Controllers
         }
 
 
-        public IActionResult Plus(int id)
+        public IActionResult Plus(int cartId)
         {
             try
             {
-                var cart = _uow.ShoppingCart.GetFirstOrDefault(x => x.Id == id, includeProperties: "Product");
+                var cart = _uow.ShoppingCart.GetFirstOrDefault(x => x.Id == cartId, includeProperties: "Product");
 
                 if (cart == null)
-                    return Json(false);
-                //return RedirectToAction("Index");
+                    return RedirectToAction("Index");
+                //return Json(false);
 
                 cart.Count += 1;
-                cart.Price = ProjectConstant.GetPriceBaseOnQuantity(cart.Count, cart.Product.Price, cart.Product.Price50,
-                    cart.Product.Price100);
+                cart.Price = ProjectConstant.GetPriceBaseOnQuantity(cart.Count, cart.Product.Price, cart.Product.Price50, cart.Product.Price100);
 
                 _uow.Save();
                 //var allShoppingCart = _uow.ShoppingCart.GetAll();
 
-                return Json(true);
-                //return RedirectToAction("Index");
+                //return Json(true);
+                return RedirectToAction("Index");
             }
             catch (Exception ex)
             {
@@ -132,12 +131,13 @@ namespace BookStore.Areas.Customer.Controllers
             else
             {
                 cart.Count -= 1;
-                cart.Price = ProjectConstant.GetPriceBaseOnQuantity(cart.Count, cart.Product.Price, cart.Product.Price50, 
+                cart.Price = ProjectConstant.GetPriceBaseOnQuantity(cart.Count, cart.Product.Price, cart.Product.Price50,
                     cart.Product.Price100);
                 _uow.Save();
             }
             return RedirectToAction("Index");
         }
+
 
         public IActionResult Remove(int cartId)
         {
@@ -205,7 +205,8 @@ namespace BookStore.Areas.Customer.Controllers
             List<OrderDetails> orderDetailsList = new List<OrderDetails>();
             foreach (var orderDetail in ShoppingCartVM.ListCart)
             {
-                orderDetail.Price = ProjectConstant.GetPriceBaseOnQuantity(orderDetail.Count, orderDetail.Product.Price, orderDetail.Product.Price50, orderDetail.Product.Price100);
+                orderDetail.Price = ProjectConstant.GetPriceBaseOnQuantity(orderDetail.Count, orderDetail.Product.Price,
+                    orderDetail.Product.Price50, orderDetail.Product.Price100);
 
                 OrderDetails oDetails = new OrderDetails()
                 {

@@ -16,6 +16,7 @@ using BookStore.DataAccess.IMainRepository;
 using BookStore.DataAccess.MainRepository;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using BookStore.Utility;
+using Stripe;
 
 namespace BookStore
 {
@@ -43,6 +44,8 @@ namespace BookStore
             services.AddSingleton<IEmailSender, EmailSender>();
 
             services.Configure<EmailOptions>(Configuration);
+            services.Configure<StripeSettings>(Configuration.GetSection("Stripe"));
+
 
 
             services.AddControllersWithViews().AddRazorRuntimeCompilation();
@@ -90,6 +93,9 @@ namespace BookStore
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
+            StripeConfiguration.ApiKey = Configuration.GetSection("Stripe")["SecretKey"];
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
